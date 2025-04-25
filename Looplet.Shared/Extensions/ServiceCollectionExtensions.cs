@@ -1,7 +1,9 @@
 ﻿using Looplet.DAL.Repositories;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 
-namespace Looplet.API.Extensions;
+namespace Looplet.Shared.Extensions;
 
 public static class ServiceCollectionExtensions
 {

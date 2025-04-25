@@ -1,5 +1,5 @@
 using Serilog;
-using Looplet.API.Extensions;
+using Looplet.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

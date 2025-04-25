@@ -1,6 +1,7 @@
 using Looplet.DAL.Repositories;
 using BackgroundWorkerController.Workers;
 using Serilog;
+using Looplet.Shared.Extensions;
 
 var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
 
@@ -24,6 +25,7 @@ try
         .UseSerilog()
         .ConfigureServices((hostContext, services) =>
         {
+            services.AddMongoServices(configuration);
             services.AddSingleton<IConfiguration>(configuration);
             services.AddScoped<IWorkerRepository, WorkerRepository>();
             services.AddHostedService<HelloWorldWorker>();

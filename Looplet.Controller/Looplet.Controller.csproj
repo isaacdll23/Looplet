@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="appsettings.Development.json" />
-    <Content Remove="appsettings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="appsettings.Development.json" />
     <None Include="appsettings.json" />
   </ItemGroup>
@@ -25,6 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Looplet.DAL\Looplet.DAL.csproj" />
+    <ProjectReference Include="..\Looplet.Shared\Looplet.Shared.csproj" />
   </ItemGroup>
 </Project>

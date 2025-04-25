@@ -5,7 +5,7 @@ VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Looplet.API", "Looplet.API\Looplet.API.csproj", "{18FF485A-2DBE-4E13-8BE4-6D11EF306E06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Looplet.DAL", "Looplet.DAL\Looplet.DAL.csproj", "{7CE1226F-FC4A-4287-80C5-2B09DBF61E0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Looplet.Shared", "Looplet.Shared\Looplet.Shared.csproj", "{7CE1226F-FC4A-4287-80C5-2B09DBF61E0B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Looplet.Controller", "Looplet.Controller\Looplet.Controller.csproj", "{93F472E9-C78C-49B0-B41D-3D3F466F9313}"
 EndProject
