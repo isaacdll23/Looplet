@@ -1,8 +1,8 @@
-﻿using BackgroundWorker.DAL.Models;
+﻿using Looplet.DAL.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace BackgroundWorker.DAL.Repositories;
+namespace Looplet.DAL.Repositories;
 
 public interface IWorkerRepository
 {

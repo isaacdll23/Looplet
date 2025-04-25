@@ -1,6 +1,5 @@
 using Serilog;
-using BackgroundWorker.API.Extensions;
-using BackgroundWorker.Services;
+using Looplet.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +15,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMongoServices(builder.Configuration);
-
-builder.Services.AddHostedService<HelloWorldService>();
 
 var app = builder.Build();
 

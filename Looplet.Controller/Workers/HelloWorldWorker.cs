@@ -1,23 +1,19 @@
-﻿using BackgroundWorker.DAL.Repositories;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Looplet.DAL.Repositories;
 using MongoDB.Bson;
 
-namespace BackgroundWorker.Services;
+namespace BackgroundWorkerController.Workers;
 
-public class HelloWorldService : BackgroundService
+public class HelloWorldWorker : BackgroundService
 {
-    private readonly ILogger<HelloWorldService> _logger;
+    private readonly ILogger<HelloWorldWorker> _logger;
     private readonly IServiceProvider _serviceProvider;
     private readonly string _workerId;
 
-    public HelloWorldService(ILogger<HelloWorldService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
+    public HelloWorldWorker(ILogger<HelloWorldWorker> logger, IServiceProvider serviceProvider, IConfiguration configuration)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
-        _workerId = configuration["RegisteredServices:HelloWorldService:WorkerId"] ?? throw new ArgumentNullException("WorkerId is not configured in appsettings.json");
+        _workerId = configuration["RegisteredServices:HelloWorldService:WorkerId"] ?? throw new ArgumentNullException(nameof(configuration), "WorkerId is not configured in appsettings.json");
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

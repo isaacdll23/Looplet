@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 
-namespace BackgroundWorker.DAL.Models;
+namespace Looplet.DAL.Models;
 
 public class Worker
 {

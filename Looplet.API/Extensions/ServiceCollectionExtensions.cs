@@ -1,7 +1,7 @@
-﻿using BackgroundWorker.DAL.Repositories;
+﻿using Looplet.DAL.Repositories;
 using MongoDB.Driver;
 
-namespace BackgroundWorker.API.Extensions;
+namespace Looplet.API.Extensions;
 
 public static class ServiceCollectionExtensions
 {

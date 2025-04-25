@@ -1,9 +1,9 @@
-﻿using BackgroundWorker.DAL.Models;
-using BackgroundWorker.DAL.Repositories;
+﻿using Looplet.DAL.Models;
+using Looplet.DAL.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
-namespace BackgroundWorker.API.Controllers
+namespace Looplet.API.Controllers
 {
     public class WorkerController : Controller
     {
