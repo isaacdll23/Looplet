@@ -14,6 +14,7 @@ namespace BackgroundWorker.API.Controllers
             _workerRepository = workerRepository;
         }
 
+        #region GET
         [HttpGet]
         [Route("api/workers")]
         public async Task<IActionResult> GetWorkers()
@@ -28,7 +29,9 @@ namespace BackgroundWorker.API.Controllers
 
             return Ok(simplifedWorkers);
         }
+        #endregion
 
+        #region POST
         [HttpPost]
         [Route("api/workers")]
         public async Task<IActionResult> AddWorker([FromBody] Worker worker)
@@ -55,6 +58,50 @@ namespace BackgroundWorker.API.Controllers
             return CreatedAtAction(nameof(AddWorker), new { id = worker.Id.ToString() });
         }
 
+        [HttpPost]
+        [Route("api/workers/{id}/enable")]
+        public async Task<IActionResult> EnableWorker(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Worker ID cannot be null or empty.");
+            }
+
+            var workerId = ObjectId.Parse(id);
+            var worker = await _workerRepository.GetWorkerByIdAsync(workerId);
+            if (worker == null)
+            {
+                return NotFound($"Worker with ID '{id}' not found.");
+            }
+
+            worker.IsEnabled = true;
+            await _workerRepository.UpdateWorkerAsync(worker);
+            return Ok(new { Id = worker.Id.ToString(), worker.IsEnabled });
+        }
+
+        [HttpPost]
+        [Route("api/workers/{id}/disable")]
+        public async Task<IActionResult> DisableWorker(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Worker ID cannot be null or empty.");
+            }
+
+            var workerId = ObjectId.Parse(id);
+            var worker = await _workerRepository.GetWorkerByIdAsync(workerId);
+            if (worker == null)
+            {
+                return NotFound($"Worker with ID '{id}' not found.");
+            }
+
+            worker.IsEnabled = false;
+            await _workerRepository.UpdateWorkerAsync(worker);
+            return Ok(new { Id = worker.Id.ToString(), worker.IsEnabled });
+        }
+        #endregion
+
+        #region PUT
         [HttpPut]
         [Route("api/workers/{id}")]
         public async Task<IActionResult> UpdateWorker(string id, [FromBody] Worker worker)
@@ -75,12 +122,19 @@ namespace BackgroundWorker.API.Controllers
                 return NotFound($"Worker with ID '{id}' not found.");
             }
 
+            if(worker.Name != existingWorker.Name)
+            {
+                return BadRequest("Worker names cannot be updated.");
+            }
+
             worker.Id = workerId;
             await _workerRepository.UpdateWorkerAsync(worker);
 
             return Ok(new { Id = worker.Id.ToString(), worker.Name });
         }
+        #endregion
 
+        #region DELETE
         [HttpDelete]
         [Route("api/workers/{id}")]
         public async Task<IActionResult> DeleteWorker(string id)
@@ -100,5 +154,6 @@ namespace BackgroundWorker.API.Controllers
             await _workerRepository.DeleteWorkerAsync(workerId);
             return NoContent();
         }
+        #endregion
     }
 }

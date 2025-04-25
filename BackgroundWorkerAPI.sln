@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundWorker.API", "Bac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundWorker.DAL", "BackgroundWorker.DAL\BackgroundWorker.DAL.csproj", "{7CE1226F-FC4A-4287-80C5-2B09DBF61E0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundWorker.Services", "BackgroundWorker.Services\BackgroundWorker.Services.csproj", "{995F7002-22C0-4B52-B364-64ECABA03BBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7CE1226F-FC4A-4287-80C5-2B09DBF61E0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CE1226F-FC4A-4287-80C5-2B09DBF61E0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CE1226F-FC4A-4287-80C5-2B09DBF61E0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{995F7002-22C0-4B52-B364-64ECABA03BBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{995F7002-22C0-4B52-B364-64ECABA03BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{995F7002-22C0-4B52-B364-64ECABA03BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{995F7002-22C0-4B52-B364-64ECABA03BBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
