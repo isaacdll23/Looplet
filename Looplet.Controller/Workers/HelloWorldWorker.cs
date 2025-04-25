@@ -34,12 +34,12 @@ public class HelloWorldWorker : BackgroundService
                 }
                 if (worker.IsEnabled)
                 {
-                    _logger.LogInformation("Worker is enabled. Executing. [WorkerID: {workerId}]", _workerId);
+                    _logger.LogInformation("Worker is enabled. Executing. [WorkerID: {workerId}. Worker Name: {workerName}]", _workerId, worker.Name);
                     await ExecuteTaskAsync();
                 }
                 else
                 {
-                    _logger.LogInformation("Worker is disabled [WorkerID: {workerId}]", _workerId);
+                    _logger.LogInformation("Worker is disabled [WorkerID: {workerId}. Worker Name: {workerName}]", _workerId, worker.Name);
                 }
 
                 await Task.Delay(worker.IntervalSeconds * 1000, stoppingToken);
