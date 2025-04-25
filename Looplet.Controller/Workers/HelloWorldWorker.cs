@@ -1,4 +1,5 @@
 ﻿using Looplet.DAL.Repositories;
+using Looplet.Shared.Models;
 using MongoDB.Bson;
 
 namespace BackgroundWorkerController.Workers;
@@ -35,7 +36,27 @@ public class HelloWorldWorker : BackgroundService
                 if (worker.IsEnabled)
                 {
                     _logger.LogInformation("Worker is enabled. Executing. [WorkerID: {workerId}. Worker Name: {workerName}]", _workerId, worker.Name);
+
+                    var workerRun = new WorkerRun
+                    {
+                        WorkerId = worker.Id,
+                        StartTime = DateTime.UtcNow,
+                        Status = WorkerRunStatus.Starting,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        ErrorMessage = null
+                    };
+
+                    var workerRunRepository = scope.ServiceProvider.GetRequiredService<IWorkerRunRepository>();
+                    await workerRunRepository.AddWorkerRunAsync(workerRun);
+
                     await ExecuteTaskAsync();
+
+                    workerRun.Status = WorkerRunStatus.Completed;
+                    workerRun.EndTime = DateTime.UtcNow;
+                    workerRun.UpdatedAt = DateTime.UtcNow;
+                    await workerRunRepository.UpdateWorkerRunAsync(workerRun);
+                    _logger.LogInformation("Worker executed successfully [WorkerID: {workerId}. Worker Name: {workerName}]", _workerId, worker.Name);
                 }
                 else
                 {

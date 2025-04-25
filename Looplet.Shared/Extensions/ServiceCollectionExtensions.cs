@@ -29,8 +29,6 @@ public static class ServiceCollectionExtensions
             return client.GetDatabase(databaseName);
         });
 
-        services.AddScoped<IWorkerRepository, WorkerRepository>();
-
         return services;
     }
 }

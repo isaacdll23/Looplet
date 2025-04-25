@@ -28,6 +28,7 @@ try
             services.AddMongoServices(configuration);
             services.AddSingleton<IConfiguration>(configuration);
             services.AddScoped<IWorkerRepository, WorkerRepository>();
+            services.AddScoped<IWorkerRunRepository, WorkerRunRepository>();
             services.AddHostedService<HelloWorldWorker>();
         })
         .Build();
