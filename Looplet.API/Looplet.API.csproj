@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Looplet.Jobs\Looplet.Jobs.csproj" />
     <ProjectReference Include="..\Looplet.Shared\Looplet.Shared.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,6 @@
 using Serilog;
 using Looplet.Shared.Extensions;
+using Looplet.API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,9 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Looplet API for managing jobs and job instances."
     });
 });
+
 builder.Services.AddMongoServices(builder.Configuration);
+builder.Services.AddSingleton<IJobTypeCatalog, JobTypeCatalog>();
 
 var app = builder.Build();
 

@@ -9,7 +9,7 @@ public class JobSchedulerService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<JobSchedulerService> _logger;
-    private readonly TimeSpan _pollInterval = TimeSpan.FromMilliseconds(5000);
+    private readonly TimeSpan _pollInterval = TimeSpan.FromMilliseconds(3000);
     private readonly int _maxParrallelJobs = 4;
 
     public JobSchedulerService(IServiceProvider serviceProvider, ILogger<JobSchedulerService> logger)
@@ -33,9 +33,6 @@ public class JobSchedulerService : BackgroundService
                 var jobsToRun = allJobs
                     .Where(job => job.Enabled && job.NextRunAt <= now)
                     .ToList();
-
-                // add execution limit based on retries
-
 
                 _logger.LogInformation("Found {JobCount} jobs to run", jobsToRun.Count);
 
