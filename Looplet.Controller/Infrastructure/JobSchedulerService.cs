@@ -5,18 +5,10 @@ using Looplet.Shared.Repositories;
 
 namespace Looplet.Controller.Infrastructure;
 
-public class JobSchedulerService : BackgroundService
+public class JobSchedulerService(IServiceProvider serviceProvider, ILogger<JobSchedulerService> logger) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<JobSchedulerService> _logger;
     private readonly TimeSpan _pollInterval = TimeSpan.FromMilliseconds(1000);
     private readonly int _maxParrallelJobs = 4;
-
-    public JobSchedulerService(IServiceProvider serviceProvider, ILogger<JobSchedulerService> logger)
-    {
-        _serviceProvider = serviceProvider;
-        _logger = logger;
-    }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -24,8 +16,8 @@ public class JobSchedulerService : BackgroundService
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            _logger.LogInformation("JobSchedulerService is running at: {time}", DateTimeOffset.Now);
-            using (var scope = _serviceProvider.CreateScope())
+            logger.LogInformation("JobSchedulerService is running at: {time}", DateTimeOffset.Now);
+            using (var scope = serviceProvider.CreateScope())
             {
                 var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
                 var now = DateTime.UtcNow;
@@ -34,17 +26,17 @@ public class JobSchedulerService : BackgroundService
                     .Where(job => job.Enabled && job.NextRunAt <= now)
                     .ToList();
 
-                _logger.LogInformation("Found {JobCount} jobs to run", jobsToRun.Count);
+                logger.LogInformation("Found {JobCount} jobs to run", jobsToRun.Count);
 
                 foreach (var job in jobsToRun)
                 {
                     await semaphore.WaitAsync(cancellationToken);
-                    _logger.LogInformation("Running job {JobName} at {RunTime}", job.Name, now);
+                    logger.LogInformation("Running job {JobName} at {RunTime}", job.Name, now);
                     _ = RunJobAsync(job, semaphore, cancellationToken)
                         .ContinueWith(task =>
                         {
                             if (task.Exception != null)
-                                _logger.LogError(task.Exception, "Error running job {JobName}", job.Name);
+                                logger.LogError(task.Exception, "Error running job {JobName}", job.Name);
                         });
                 }
             }
@@ -56,7 +48,7 @@ public class JobSchedulerService : BackgroundService
     {
         try
         {
-            using var scope = _serviceProvider.CreateScope();
+            using var scope = serviceProvider.CreateScope();
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
             var jobInstanceRepository = scope.ServiceProvider.GetRequiredService<IJobInstanceRepository>();
             var factory = scope.ServiceProvider.GetRequiredService<IJobFactory>();
@@ -92,7 +84,7 @@ public class JobSchedulerService : BackgroundService
         }
         catch (Exception ex)
         {
-            using var scope = _serviceProvider.CreateScope();
+            using var scope = serviceProvider.CreateScope();
             var jobInstanceRepository = scope.ServiceProvider.GetRequiredService<IJobInstanceRepository>();
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
             var instance = new JobInstance
@@ -107,7 +99,7 @@ public class JobSchedulerService : BackgroundService
             jobDefinition.Enabled = false;
             await jobRepository.UpdateAsync(jobDefinition);
 
-            _logger.LogError(ex, "Job {JobName} failed: {ErrorMessage}", jobDefinition.Name, ex.Message);
+            logger.LogError(ex, "Job {JobName} failed: {ErrorMessage}", jobDefinition.Name, ex.Message);
         }
         finally
         {
