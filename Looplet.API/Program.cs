@@ -1,6 +1,5 @@
 using Serilog;
 using Looplet.Shared.Extensions;
-using Looplet.DAL.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,15 +10,19 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddMongoServices(builder.Configuration);
-builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
-builder.Services.AddScoped<IWorkerRunRepository, WorkerRunRepository>();
-
 builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Looplet API",
+        Version = "v1",
+        Description = "Looplet API for managing jobs and job instances."
+    });
+});
+builder.Services.AddMongoServices(builder.Configuration);
 
 var app = builder.Build();
 

@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Cronos" Version="0.10.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
@@ -20,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Looplet.Jobs\Looplet.Jobs.csproj" />
     <ProjectReference Include="..\Looplet.Shared\Looplet.Shared.csproj" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Looplet.DAL.Repositories;
+using Looplet.Shared.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
@@ -28,6 +29,9 @@ public static class ServiceCollectionExtensions
             var client = _.GetRequiredService<IMongoClient>();
             return client.GetDatabase(databaseName);
         });
+
+        services.AddScoped<IJobInstanceRepository, JobInstanceRepository>();
+        services.AddScoped<IJobRepository, JobRepository>();
 
         return services;
     }
