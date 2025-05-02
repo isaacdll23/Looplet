@@ -1,8 +1,6 @@
-﻿using Looplet.Abstractions.Interfaces;
+﻿using Looplet.Abstractions.Repositories;
 using Looplet.Abstractions.Models;
-using Looplet.Abstractions.Repositories;
 using Looplet.Abstractions.Static;
-using Looplet.API.Infrastructure;
 using Looplet.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -15,7 +13,7 @@ public class JobsController(IJobDefinitionRepository jobRepository) : Controller
     [Route("api/jobs")]
     public async Task<IActionResult> List()
     {
-        var jobs = await jobRepository.ListAsync();
+        List<JobDefinition> jobs = await jobRepository.ListAsync();
         return Ok(jobs);
     }
 
@@ -29,7 +27,7 @@ public class JobsController(IJobDefinitionRepository jobRepository) : Controller
         }
 
         // Validate that a job with the same name does not already exist
-        var existingJobs = await jobRepository.ListAsync();
+        List<JobDefinition> existingJobs = await jobRepository.ListAsync();
         if (existingJobs.Any(j => j.Name.Equals(jobRequest.Name, StringComparison.OrdinalIgnoreCase)))
         {
             return Conflict($"A job with the name '{jobRequest.Name}' already exists.");
@@ -55,7 +53,7 @@ public class JobsController(IJobDefinitionRepository jobRepository) : Controller
             UpdatedAt = DateTime.UtcNow
         };
 
-        var createdJob = await jobRepository.CreateAsync(jobDefinition);
+        JobDefinition createdJob = await jobRepository.CreateAsync(jobDefinition);
 
 
         return CreatedAtAction(nameof(Create), new { id = createdJob.Id.ToString() });

@@ -2,7 +2,7 @@ using Looplet.API.Extensions;
 using Looplet.API.Infrastructure.Scheduling;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Supressing warning since using the WebApplicationBuilder.Configuration does not trigger
 // the Load method of the ConfigurationProvider early enough.
@@ -42,7 +42,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddMongoServices(builder.Configuration);
 builder.Services.AddHostedService<JobSchedulerService>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {

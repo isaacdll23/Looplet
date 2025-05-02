@@ -39,7 +39,7 @@ public class ExecuteController : ControllerBase
 
         try
         {
-            var job = _jobFactory.Create(req.JobType);
+            IJob job = _jobFactory.Create(req.JobType);
             await job.ExecuteAsync(parameters, cancellationToken);
             return Ok();
         }

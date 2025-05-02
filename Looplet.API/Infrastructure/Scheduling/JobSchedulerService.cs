@@ -45,15 +45,15 @@ public class JobSchedulerService : BackgroundService
         while (!cancellationToken.IsCancellationRequested)
         {
             _logger.LogDebug("Polling for due jobs at {Now}", DateTime.UtcNow);
-            using var scope = _serviceProvider.CreateScope();
-            var jobDefinitionRepository = scope.ServiceProvider.GetRequiredService<IJobDefinitionRepository>();
-            var jobInstanceRepository = scope.ServiceProvider.GetRequiredService<IJobInstanceRepository>();
-            var allJobs = await jobDefinitionRepository.ListAsync();
+            using IServiceScope scope = _serviceProvider.CreateScope();
+            IJobDefinitionRepository jobDefinitionRepository = scope.ServiceProvider.GetRequiredService<IJobDefinitionRepository>();
+            IJobInstanceRepository jobInstanceRepository = scope.ServiceProvider.GetRequiredService<IJobInstanceRepository>();
+            List<JobDefinition> allJobs = await jobDefinitionRepository.ListAsync();
             var toRun = allJobs
                                 .Where(j => j.Enabled && j.NextRunAt <= DateTime.UtcNow)
                                 .ToList();
 
-            foreach (var jobDefinition in toRun)
+            foreach (JobDefinition? jobDefinition in toRun)
             {
                 await sem.WaitAsync(cancellationToken);
                 _ = DispatchJobAsync(jobDefinition, sem, jobDefinitionRepository, jobInstanceRepository, cancellationToken)
@@ -79,14 +79,14 @@ public class JobSchedulerService : BackgroundService
         {
             // Validate job definition is available on worker
             // make get request to worker
-            var client = _httpFactory.CreateClient();
-            var resp = await client.GetAsync($"{_workerBaseUri}/host/jobs", cancellationToken);
+            HttpClient client = _httpFactory.CreateClient();
+            HttpResponseMessage resp = await client.GetAsync($"{_workerBaseUri}/host/jobs", cancellationToken);
             if (resp.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 _logger.LogError("Worker is not available. Status code: {StatusCode}", resp.StatusCode);
                 return;
             }
-            var workerResponse = await resp.Content.ReadFromJsonAsync<GetHostJobsResponse>(cancellationToken: cancellationToken);
+            GetHostJobsResponse? workerResponse = await resp.Content.ReadFromJsonAsync<GetHostJobsResponse>(cancellationToken: cancellationToken);
 
             if (workerResponse == null)
             {

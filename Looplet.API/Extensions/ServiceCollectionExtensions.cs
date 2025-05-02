@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
         services.AddScoped(_ =>
         {
-            var client = _.GetRequiredService<IMongoClient>();
+            IMongoClient client = _.GetRequiredService<IMongoClient>();
             return client.GetDatabase(databaseName);
         });
 

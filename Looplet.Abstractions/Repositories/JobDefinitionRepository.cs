@@ -25,7 +25,7 @@ public class JobDefinitionRepository(IMongoDatabase database) : IJobDefinitionRe
 
     public async Task<JobDefinition> GetAsync(string id)
     {
-        var filter = Builders<JobDefinition>.Filter.Eq(j => j.Id, ObjectId.Parse(id));
+        FilterDefinition<JobDefinition> filter = Builders<JobDefinition>.Filter.Eq(j => j.Id, ObjectId.Parse(id));
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
@@ -36,14 +36,14 @@ public class JobDefinitionRepository(IMongoDatabase database) : IJobDefinitionRe
 
     public async Task<JobDefinition> UpdateAsync(JobDefinition jobDefinition)
     {
-        var filter = Builders<JobDefinition>.Filter.Eq(j => j.Id, jobDefinition.Id);
+        FilterDefinition<JobDefinition> filter = Builders<JobDefinition>.Filter.Eq(j => j.Id, jobDefinition.Id);
         await _collection.ReplaceOneAsync(filter, jobDefinition, new ReplaceOptions { IsUpsert = false });
         return jobDefinition;
     }
 
     public async Task DeleteAsync(string id)
     {
-        var filter = Builders<JobDefinition>.Filter.Eq(j => j.Id, ObjectId.Parse(id));
+        FilterDefinition<JobDefinition> filter = Builders<JobDefinition>.Filter.Eq(j => j.Id, ObjectId.Parse(id));
         await _collection.DeleteOneAsync(filter);
     }
 }

@@ -1,3 +1,5 @@
+using Infisical.Sdk;
+
 namespace Looplet.API.Infrastructure.Infisical;
 
 public class InfisicalConfigurationProvider(InfisicalOptions _options) : ConfigurationProvider
@@ -6,9 +8,9 @@ public class InfisicalConfigurationProvider(InfisicalOptions _options) : Configu
     {
         var infisicalService = new InfisicalService(_options);
 
-        var secrets = infisicalService.ListSecrets();
+        SecretElement[] secrets = infisicalService.ListSecrets();
 
-        foreach (var secret in secrets)
+        foreach (SecretElement secret in secrets)
         {
             Data[secret.SecretKey] = secret.SecretValue;
         }
