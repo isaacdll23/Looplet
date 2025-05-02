@@ -1,8 +1,10 @@
+using Looplet.Abstractions.Extensions;
+using Looplet.API.Infrastructure.Scheduling;
 using Serilog;
-using Looplet.Shared.Extensions;
-using Looplet.API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables();
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -12,7 +14,7 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -24,8 +26,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddHttpClient();
 builder.Services.AddMongoServices(builder.Configuration);
-builder.Services.AddSingleton<IJobTypeCatalog, JobTypeCatalog>();
+builder.Services.AddHostedService<JobSchedulerService>();
 
 var app = builder.Build();
 

@@ -1,13 +1,15 @@
-﻿using Looplet.API.Infrastructure;
+﻿using Looplet.Abstractions.Interfaces;
+using Looplet.Abstractions.Models;
+using Looplet.Abstractions.Repositories;
+using Looplet.Abstractions.Static;
+using Looplet.API.Infrastructure;
 using Looplet.API.Models;
-using Looplet.Shared.Models;
-using Looplet.Shared.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
 namespace Looplet.API.Controllers;
 
-public class JobsController(IJobRepository jobRepository, IJobTypeCatalog jobTypeCatalog) : Controller
+public class JobsController(IJobDefinitionRepository jobRepository) : ControllerBase
 {
     [HttpGet]
     [Route("api/jobs")]
@@ -43,7 +45,7 @@ public class JobsController(IJobRepository jobRepository, IJobTypeCatalog jobTyp
                        jobRequest.Parameters
                           .Select(kv => new BsonElement(
                              kv.Key,
-                             kv.Value.ToBson()))),
+                             JsonToBsonConverter.ConvertJsonElementToBsonValue(kv.Value)))),
             CronSchedule = jobRequest.CronSchedule,
             NextRunAt = jobRequest.NextRunAt ?? DateTime.UtcNow,
             Enabled = jobRequest.Enabled ?? true,
@@ -63,7 +65,8 @@ public class JobsController(IJobRepository jobRepository, IJobTypeCatalog jobTyp
     [Route("api/jobs/types")]
     public IActionResult GetJobTypes()
     {
-        var jobTypes = jobTypeCatalog.GetAll();
-        return Ok(jobTypes);
+        // return the list of available job from workers
+
+        return Ok();
     }
 }
