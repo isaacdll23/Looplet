@@ -7,8 +7,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMongoServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration["MongoDB:ConnectionString"];
-        var databaseName = configuration["MongoDB:DatabaseName"];
+        var connectionString = configuration["DatabaseConnectionString"];
+        var databaseName = configuration["DatabaseName"];
 
         if (string.IsNullOrEmpty(connectionString))
         {
