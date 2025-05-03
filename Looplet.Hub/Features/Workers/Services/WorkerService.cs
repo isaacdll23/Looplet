@@ -51,7 +51,7 @@ public class WorkerService : IWorkerService
             throw new InvalidOperationException($"A worker with the alias '{alias}' already exists.");
         }
 
-        // Validate the worker is reachable
+        // Validate the URI is valid
         var uri = new Uri(baseUrl);
         if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
         {
@@ -60,7 +60,7 @@ public class WorkerService : IWorkerService
 
         // Ping health endpoint
         using var client = new HttpClient();
-        client.Timeout = TimeSpan.FromSeconds(5); // Set a timeout for the request
+        client.Timeout = TimeSpan.FromSeconds(5);
 
         var healthCheckUrl = $"{baseUrl.TrimEnd('/')}/health";
         _logger.LogInformation($"Pinging health endpoint at {healthCheckUrl} for worker registration.");
