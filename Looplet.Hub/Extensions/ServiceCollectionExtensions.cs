@@ -1,4 +1,4 @@
-﻿using Looplet.Abstractions.Repositories;
+﻿using Looplet.Hub.Features.Jobs.Repositories;
 using MongoDB.Driver;
 
 namespace Looplet.Hub.Extensions;

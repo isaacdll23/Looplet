@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Looplet.Abstractions.Models.DTOs;
+namespace Looplet.Abstractions.DTOs;
 
 public class PluginModuleDto
 {

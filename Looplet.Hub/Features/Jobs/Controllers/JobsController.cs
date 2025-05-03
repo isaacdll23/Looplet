@@ -1,7 +1,6 @@
-﻿using Looplet.Abstractions.Models;
-using Looplet.Abstractions.Repositories;
-using Looplet.Abstractions.Static;
-using Looplet.Hub.Features.Jobs.Models;
+﻿using Looplet.Hub.Features.Jobs.Models;
+using Looplet.Hub.Features.Jobs.Repositories;
+using Looplet.Hub.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 

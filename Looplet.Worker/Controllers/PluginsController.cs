@@ -1,4 +1,4 @@
-using Looplet.Abstractions.Models.DTOs;
+using Looplet.Abstractions.DTOs;
 using Looplet.Worker.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 

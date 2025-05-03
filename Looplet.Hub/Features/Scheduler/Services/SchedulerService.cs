@@ -1,9 +1,8 @@
 ﻿using System.Text.Json;
 using Cronos;
-using Looplet.Abstractions.Models;
-using Looplet.Abstractions.Models.DTOs;
-using Looplet.Abstractions.Models.Requests;
-using Looplet.Abstractions.Repositories;
+using Looplet.Abstractions.DTOs;
+using Looplet.Hub.Features.Jobs.Models;
+using Looplet.Hub.Features.Jobs.Repositories;
 using Looplet.Hub.Features.Workers.Models;
 using Looplet.Hub.Features.Workers.Repositories;
 using Microsoft.Extensions.Caching.Memory;
@@ -11,9 +10,9 @@ using MongoDB.Bson;
 
 namespace Looplet.Hub.Features.Scheduler.Services;
 
-public class JobSchedulerService(
+public class SchedulerService(
   IServiceScopeFactory _serviceScopeFactory,
-  ILogger<JobSchedulerService> _logger,
+  ILogger<SchedulerService> _logger,
   IHttpClientFactory _httpFactory,
   SchedulerState _schedulerState) : BackgroundService
 {
@@ -143,7 +142,7 @@ public class JobSchedulerService(
             await jobDefinitionRepository.UpdateAsync(jobDefinition);
 
             // Build ExecuteRequest DTO
-            var request = new ExecuteRequest
+            var request = new ExecuteRequestDto
             {
                 InstanceId = jobInstance.Id.ToString(),
                 JobType = jobDefinition.JobType,

@@ -1,8 +1,8 @@
 using System.Text.Json;
 
-namespace Looplet.Abstractions.Models.Requests;
+namespace Looplet.Abstractions.DTOs;
 
-public class ExecuteRequest
+public class ExecuteRequestDto
 {
     public string InstanceId { get; set; } = default!;
     public string JobType { get; set; } = default!;

@@ -1,6 +1,6 @@
-namespace Looplet.Abstractions.Models.Requests;
+namespace Looplet.Abstractions.DTOs;
 
-public class JobCallbackRequest
+public class CallbackRequestDto
 {
     public string JobInstanceId { get; set; } = default!;
     public string Status { get; set; } = default!;

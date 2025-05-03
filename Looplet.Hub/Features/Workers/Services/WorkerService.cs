@@ -1,4 +1,4 @@
-using Looplet.Abstractions.Models.DTOs;
+using Looplet.Abstractions.DTOs;
 using Looplet.Hub.Features.Workers.Models;
 using Looplet.Hub.Features.Workers.Repositories;
 

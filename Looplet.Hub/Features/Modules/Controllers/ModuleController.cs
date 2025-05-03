@@ -1,6 +1,6 @@
-using Looplet.Abstractions.Models.DTOs;
-using Looplet.Abstractions.Repositories;
+using Looplet.Abstractions.DTOs;
 using Looplet.Hub.Configuration;
+using Looplet.Hub.Features.Jobs.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Looplet.Hub.Features.Modules.Controllers;

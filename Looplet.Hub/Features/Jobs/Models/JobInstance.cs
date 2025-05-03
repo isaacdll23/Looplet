@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Looplet.Abstractions.Models;
+namespace Looplet.Hub.Features.Jobs.Models;
 
 public enum JobStatus { Pending, Running, Succeeded, Failed }
 

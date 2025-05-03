@@ -1,4 +1,4 @@
-namespace Looplet.Abstractions.Models.DTOs;
+namespace Looplet.Abstractions.DTOs;
 
 public class HealthCheckResponseDto
 {

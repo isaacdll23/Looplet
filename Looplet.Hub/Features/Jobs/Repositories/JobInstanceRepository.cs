@@ -1,8 +1,8 @@
-﻿using Looplet.Abstractions.Models;
+﻿using Looplet.Hub.Features.Jobs.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Looplet.Abstractions.Repositories;
+namespace Looplet.Hub.Features.Jobs.Repositories;
 
 public interface IJobInstanceRepository
 {

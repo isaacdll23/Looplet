@@ -45,7 +45,7 @@ builder.Services.AddMongoServices(builder.Configuration);
 builder.Services.AddScoped<IWorkerService, WorkerService>();
 builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 builder.Services.AddSingleton<SchedulerState>();
-builder.Services.AddHostedService<JobSchedulerService>();
+builder.Services.AddHostedService<SchedulerService>();
 
 WebApplication app = builder.Build();
 

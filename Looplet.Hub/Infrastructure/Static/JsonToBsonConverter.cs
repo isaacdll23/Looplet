@@ -1,7 +1,7 @@
-﻿using MongoDB.Bson;
-using System.Text.Json;
+﻿using System.Text.Json;
+using MongoDB.Bson;
 
-namespace Looplet.Abstractions.Static;
+namespace Looplet.Hub.Infrastructure.Static;
 
 public static class JsonToBsonConverter
 {

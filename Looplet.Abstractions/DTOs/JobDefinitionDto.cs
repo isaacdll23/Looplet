@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
 
-namespace Looplet.Abstractions.Models.DTOs;
+namespace Looplet.Abstractions.DTOs;
 
 public class JobDefitionDto
 {
