@@ -17,7 +17,7 @@ public class SchedulerController : ControllerBase
     [HttpGet("status")]
     public ActionResult<SchedulerState> GetSchedulerStatus()
     {
-        return Ok(_schedulerState.Enabled);
+        return Ok(new { Status = _schedulerState.Enabled });
     }
 
     [HttpPost("enable")]
@@ -30,7 +30,7 @@ public class SchedulerController : ControllerBase
     [HttpPost("disable")]
     public IActionResult DisableScheduler()
     {
-        _schedulerState.Enabled = true;
+        _schedulerState.Enabled = false;
         return NoContent();
     }
 }
