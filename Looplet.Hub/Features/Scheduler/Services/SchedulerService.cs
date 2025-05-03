@@ -6,26 +6,21 @@ using Looplet.Abstractions.Models.Requests;
 using Looplet.Abstractions.Repositories;
 using Looplet.Hub.Features.Workers.Models;
 using Looplet.Hub.Features.Workers.Repositories;
-using Looplet.Hub.Infrastructure.Scheduling;
 using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Bson;
 
-namespace Looplet.Hub.Infrastructure.Scheduling;
+namespace Looplet.Hub.Features.Scheduler.Services;
 
 public class JobSchedulerService(
-  IServiceScopeFactory serviceScopeFactory,
-  ILogger<JobSchedulerService> logger,
-  IHttpClientFactory httpFactory,
-  SchedulerState schedulerState) : BackgroundService
+  IServiceScopeFactory _serviceScopeFactory,
+  ILogger<JobSchedulerService> _logger,
+  IHttpClientFactory _httpFactory,
+  SchedulerState _schedulerState) : BackgroundService
 {
-    private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
-    private readonly ILogger<JobSchedulerService> _logger = logger;
-    private readonly IHttpClientFactory _httpFactory = httpFactory;
+    private readonly int _maxParallelJobs = 4;
     private readonly TimeSpan _pollInterval = TimeSpan.FromSeconds(1);
     private readonly TimeSpan _disabledPollInterval = TimeSpan.FromSeconds(10);
     private readonly TimeSpan _cacheExpiration = TimeSpan.FromMinutes(5);
-    private readonly int _maxParallelJobs = 4;
-    private readonly SchedulerState _schedulerState = schedulerState;
     private readonly MemoryCache _cache = new(new MemoryCacheOptions());
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -55,7 +50,7 @@ public class JobSchedulerService(
                 _cache.Set("workers", workers, _cacheExpiration);
             }
 
-            _logger.LogInformation("Polling for due jobs at {Now}", DateTime.UtcNow);
+            _logger.LogInformation("Polling for due jobs.");
             IJobDefinitionRepository jobDefinitionRepository = scope.ServiceProvider.GetRequiredService<IJobDefinitionRepository>();
             IJobInstanceRepository jobInstanceRepository = scope.ServiceProvider.GetRequiredService<IJobInstanceRepository>();
             List<JobDefinition> allJobs = await jobDefinitionRepository.ListAsync();
@@ -66,12 +61,10 @@ public class JobSchedulerService(
             if (toRun.Count == 0)
             {
                 _logger.LogInformation("No jobs to run.");
-            }
-            else
-            {
-                _logger.LogInformation("Found {Count} jobs to run.", toRun.Count);
+                continue;
             }
 
+            _logger.LogInformation("Found {Count} jobs to run. Dispatching jobs.", toRun.Count);
             foreach (JobDefinition? jobDefinition in toRun)
             {
                 await sem.WaitAsync(cancellationToken);
@@ -196,6 +189,7 @@ public class JobSchedulerService(
                 ErrorMessage = ex.Message
             };
             await jobInstanceRepository.CreateJobInstaceAsync(failInst);
+
             jobDefinition.Enabled = false;
             await jobDefinitionRepository.UpdateAsync(jobDefinition);
         }

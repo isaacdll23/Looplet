@@ -1,7 +1,8 @@
 using Looplet.Hub.Extensions;
+using Looplet.Hub.Features.Scheduler;
+using Looplet.Hub.Features.Scheduler.Services;
 using Looplet.Hub.Features.Workers.Repositories;
 using Looplet.Hub.Features.Workers.Services;
-using Looplet.Hub.Infrastructure.Scheduling;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -19,7 +20,7 @@ builder.Host.ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
         options.ClientSecret = Environment.GetEnvironmentVariable("INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET") ?? throw new ArgumentException("Unable to retrive environment variable: INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET");
         options.SiteUrl = Environment.GetEnvironmentVariable("INFISICAL_SITE_URL") ?? throw new ArgumentException("Unable to retrive environment variable: INFISICAL_SITE_URL");
 
-        string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         options.Environment = !string.IsNullOrEmpty(environment) && environment == "Development" ? "dev" : "prod";
     });
 });

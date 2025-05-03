@@ -1,4 +1,4 @@
-namespace Looplet.Hub.Infrastructure.Scheduling;
+namespace Looplet.Hub.Features.Scheduler;
 
 public class SchedulerState
 {
