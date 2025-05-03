@@ -1,7 +1,7 @@
 using Looplet.Hub.Extensions;
+using Looplet.Hub.Features.Workers.Repositories;
+using Looplet.Hub.Features.Workers.Services;
 using Looplet.Hub.Infrastructure.Scheduling;
-using Looplet.Hub.Services;
-using Looplet.Hub.Repositories;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
