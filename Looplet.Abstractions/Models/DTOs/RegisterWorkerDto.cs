@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-public class RegisterWorkerRequest
+public class RegisterWorkerDto
 {
     [Required]
     public string Alias { get; set; } = default!;

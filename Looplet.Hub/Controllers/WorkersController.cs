@@ -57,7 +57,7 @@ public class WorkersController : ControllerBase
 
     [HttpPost]
     [Route("api/workers/register")]
-    public async Task<IActionResult> RegisterWorker([FromBody] RegisterWorkerRequest request)
+    public async Task<IActionResult> RegisterWorker([FromBody] RegisterWorkerDto request)
     {
         try
         {
