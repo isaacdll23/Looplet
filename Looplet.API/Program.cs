@@ -1,7 +1,8 @@
 using Looplet.API.Extensions;
-using Looplet.API.Configuration;
 using Looplet.API.Infrastructure.Scheduling;
 using Serilog;
+using Looplet.API.Services;
+using Looplet.API.Repositories;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -29,14 +30,6 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-builder.Configuration.GetSection("Workers").Get<List<WorkerConfig>>()?.ForEach(worker =>
-{
-    if (string.IsNullOrWhiteSpace(worker.Alias) || string.IsNullOrWhiteSpace(worker.BaseUrl))
-    {
-        throw new ArgumentException("Worker configuration is invalid. Ensure 'Alias' and 'BaseUrl' are set.");
-    }
-});
-
 builder.Configuration
     .AddEnvironmentVariables();
 
@@ -49,7 +42,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient();
 builder.Services.AddMongoServices(builder.Configuration);
-builder.Services.AddHostedService<JobSchedulerService>();
+builder.Services.AddScoped<IWorkerService, WorkerService>();
+builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
+// builder.Services.AddHostedService<JobSchedulerService>();
 
 WebApplication app = builder.Build();
 
