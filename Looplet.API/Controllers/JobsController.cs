@@ -7,6 +7,7 @@ using MongoDB.Bson;
 
 namespace Looplet.API.Controllers;
 
+[ApiController]
 public class JobsController(IJobDefinitionRepository jobRepository) : ControllerBase
 {
     [HttpGet]

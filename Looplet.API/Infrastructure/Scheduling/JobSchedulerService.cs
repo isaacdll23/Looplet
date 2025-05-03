@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using Cronos;
 using Looplet.Abstractions.Models;
+using Looplet.Abstractions.Models.DTOs;
 using Looplet.Abstractions.Models.Requests;
-using Looplet.Abstractions.Models.Responses;
 using Looplet.Abstractions.Repositories;
 using MongoDB.Bson;
 
@@ -15,7 +15,7 @@ public class JobSchedulerService : BackgroundService
     private readonly IHttpClientFactory _httpFactory;
     private readonly TimeSpan _pollInterval = TimeSpan.FromSeconds(1);
     private readonly int _maxParallelJobs = 4;
-    private readonly Uri _workerBaseUri;
+    private readonly List<Uri> _workerBaseUris;
     private readonly Uri _callbackBaseUri;
 
     public JobSchedulerService(
@@ -30,13 +30,17 @@ public class JobSchedulerService : BackgroundService
 
 
         // Read configuration values
-        if (config["SchedulerConfiguration:WorkerBaseUri"] == null)
+        List<string>? workerNodeUris = config.GetSection("WorkerNodesBaseUriList").Get<List<string>>();
+
+        if (workerNodeUris == null)
             throw new ArgumentNullException("WorkerBaseUri is not configured.");
-        if (config["SchedulerConfiguration:CallbackBaseUri"] == null)
+        if (config["CallbackBaseUri"] == null)
             throw new ArgumentNullException("CallbackBaseUri is not configured.");
 
-        _workerBaseUri = new Uri(config["SchedulerConfiguration:WorkerBaseUri"]!);
-        _callbackBaseUri = new Uri(config["SchedulerConfiguration:CallbackBaseUri"]!);
+        _workerBaseUris = workerNodeUris
+            .Select(uri => new Uri(uri))
+            .ToList();
+        _callbackBaseUri = new Uri(config["CallbackBaseUri"]!);
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -80,13 +84,13 @@ public class JobSchedulerService : BackgroundService
             // Validate job definition is available on worker
             // make get request to worker
             HttpClient client = _httpFactory.CreateClient();
-            HttpResponseMessage resp = await client.GetAsync($"{_workerBaseUri}/host/jobs", cancellationToken);
+            HttpResponseMessage resp = await client.GetAsync($"{_workerBaseUris.First()}/plugins/jobs", cancellationToken);
             if (resp.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 _logger.LogError("Worker is not available. Status code: {StatusCode}", resp.StatusCode);
                 return;
             }
-            GetHostJobsResponse? workerResponse = await resp.Content.ReadFromJsonAsync<GetHostJobsResponse>(cancellationToken: cancellationToken);
+            List<PluginJobDto>? workerResponse = await resp.Content.ReadFromJsonAsync<List<PluginJobDto>>(cancellationToken: cancellationToken);
 
             if (workerResponse == null)
             {
@@ -95,7 +99,7 @@ public class JobSchedulerService : BackgroundService
             }
 
             var jobType = jobDefinition.JobType;
-            if (!workerResponse.Jobs.Any(m => m.Equals(jobType, StringComparison.OrdinalIgnoreCase)))
+            if (!workerResponse.Any(m => m.Name.Equals(jobType, StringComparison.OrdinalIgnoreCase)))
             {
                 _logger.LogError("Job type {JobType} is not available on worker.", jobType);
                 return;
@@ -138,7 +142,7 @@ public class JobSchedulerService : BackgroundService
             // POST to worker
             client = _httpFactory.CreateClient();
             resp = await client.PostAsJsonAsync(
-                            $"{_workerBaseUri}/execute", request, cancellationToken);
+                            $"{_workerBaseUris.First()}/execute", request, cancellationToken);
 
             if (resp.StatusCode != System.Net.HttpStatusCode.OK)
             {
