@@ -1,10 +1,8 @@
-using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-using Looplet.Hub.Models;
-using Looplet.Hub.Repositories;
 using Looplet.Abstractions.Models.DTOs;
+using Looplet.Hub.Features.Workers.Models;
+using Looplet.Hub.Features.Workers.Repositories;
 
-namespace Looplet.Hub.Services;
+namespace Looplet.Hub.Features.Workers.Services;
 
 public interface IWorkerService
 {

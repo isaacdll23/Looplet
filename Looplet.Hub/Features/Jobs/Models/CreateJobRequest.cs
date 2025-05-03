@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 
-namespace Looplet.Hub.Models;
+namespace Looplet.Hub.Features.Jobs.Models;
 
 public class CreateJobRequest
 {

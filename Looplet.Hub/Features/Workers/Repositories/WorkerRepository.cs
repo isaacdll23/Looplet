@@ -1,8 +1,8 @@
-using Looplet.Hub.Models;
+using Looplet.Hub.Features.Workers.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Looplet.Hub.Repositories;
+namespace Looplet.Hub.Features.Workers.Repositories;
 
 public interface IWorkerRepository
 {

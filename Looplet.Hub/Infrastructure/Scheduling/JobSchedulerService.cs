@@ -4,8 +4,9 @@ using Looplet.Abstractions.Models;
 using Looplet.Abstractions.Models.DTOs;
 using Looplet.Abstractions.Models.Requests;
 using Looplet.Abstractions.Repositories;
-using Looplet.Hub.Models;
-using Looplet.Hub.Repositories;
+using Looplet.Hub.Features.Workers.Models;
+using Looplet.Hub.Features.Workers.Repositories;
+using Looplet.Hub.Infrastructure.Scheduling;
 using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Bson;
 

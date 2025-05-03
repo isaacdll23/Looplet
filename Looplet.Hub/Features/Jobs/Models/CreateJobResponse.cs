@@ -1,4 +1,4 @@
-﻿namespace Looplet.Hub.Models;
+﻿namespace Looplet.Hub.Features.Jobs.Models;
 
 public class CreateJobResponse
 {

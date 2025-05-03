@@ -1,11 +1,11 @@
-﻿using Looplet.Abstractions.Repositories;
-using Looplet.Abstractions.Models;
+﻿using Looplet.Abstractions.Models;
+using Looplet.Abstractions.Repositories;
 using Looplet.Abstractions.Static;
-using Looplet.Hub.Models;
+using Looplet.Hub.Features.Jobs.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
-namespace Looplet.Hub.Controllers;
+namespace Looplet.Hub.Features.Jobs.Controllers;
 
 [ApiController]
 public class JobsController(IJobDefinitionRepository jobRepository) : ControllerBase

@@ -1,9 +1,9 @@
 using Looplet.Abstractions.Models.DTOs;
-using Looplet.Hub.Models;
-using Looplet.Hub.Services;
+using Looplet.Hub.Features.Workers.Models;
+using Looplet.Hub.Features.Workers.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Looplet.Hub.Controllers;
+namespace Looplet.Hub.Features.Modules.Controllers;
 
 [ApiController]
 public class WorkersController : ControllerBase

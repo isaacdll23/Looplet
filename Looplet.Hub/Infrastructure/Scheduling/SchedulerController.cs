@@ -1,7 +1,6 @@
-using Looplet.Hub.Infrastructure.Scheduling;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Looplet.Hub.Controllers;
+namespace Looplet.Hub.Infrastructure.Scheduling;
 
 [ApiController]
 [Route("api/[controller]")]

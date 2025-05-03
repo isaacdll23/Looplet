@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Looplet.Hub.Models;
+namespace Looplet.Hub.Features.Workers.Models;
 
 public class Worker
 {

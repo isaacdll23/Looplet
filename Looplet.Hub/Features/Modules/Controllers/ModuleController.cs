@@ -3,7 +3,7 @@ using Looplet.Abstractions.Repositories;
 using Looplet.Hub.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Looplet.Hub.Controllers;
+namespace Looplet.Hub.Features.Modules.Controllers;
 public class ModuleController : ControllerBase
 {
     private readonly List<WorkerConfig> _workerConfigs;
