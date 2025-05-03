@@ -1,4 +1,5 @@
 using Looplet.API.Extensions;
+using Looplet.API.Configuration;
 using Looplet.API.Infrastructure.Scheduling;
 using Serilog;
 
@@ -27,6 +28,14 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateLogger();
+
+builder.Configuration.GetSection("Workers").Get<List<WorkerConfig>>()?.ForEach(worker =>
+{
+    if (string.IsNullOrWhiteSpace(worker.Alias) || string.IsNullOrWhiteSpace(worker.BaseUrl))
+    {
+        throw new ArgumentException("Worker configuration is invalid. Ensure 'Alias' and 'BaseUrl' are set.");
+    }
+});
 
 builder.Configuration
     .AddEnvironmentVariables();

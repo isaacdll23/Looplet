@@ -8,21 +8,18 @@ namespace Looplet.Worker.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ExecuteController : ControllerBase
+public class ExecutionController : ControllerBase
 {
     private readonly IJobFactory _jobFactory;
-    private readonly ILogger<ExecuteController> _logger;
+    private readonly ILogger<ExecutionController> _logger;
 
-    public ExecuteController(IJobFactory jobFactory, ILogger<ExecuteController> logger)
+    public ExecutionController(IJobFactory jobFactory, ILogger<ExecutionController> logger)
     {
         _jobFactory = jobFactory;
         _logger = logger;
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Execute(
         [FromBody] ExecuteRequest req,
         CancellationToken cancellationToken)
