@@ -1,6 +1,6 @@
 using Infisical.Sdk;
 
-namespace Looplet.API.Infrastructure.Infisical;
+namespace Looplet.Hub.Infrastructure.Infisical;
 
 public class InfisicalConfigurationProvider(InfisicalOptions _options) : ConfigurationProvider
 {

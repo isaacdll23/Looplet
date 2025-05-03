@@ -1,7 +1,7 @@
 ﻿using Looplet.Abstractions.Repositories;
 using MongoDB.Driver;
 
-namespace Looplet.API.Extensions;
+namespace Looplet.Hub.Extensions;
 
 public static class ServiceCollectionExtensions
 {

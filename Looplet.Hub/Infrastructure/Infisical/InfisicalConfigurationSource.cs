@@ -1,4 +1,4 @@
-namespace Looplet.API.Infrastructure.Infisical;
+namespace Looplet.Hub.Infrastructure.Infisical;
 
 public class InfisicalConfigurationSource : IConfigurationSource
 {

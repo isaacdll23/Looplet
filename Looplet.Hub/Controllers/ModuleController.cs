@@ -1,9 +1,9 @@
 using Looplet.Abstractions.Models.DTOs;
 using Looplet.Abstractions.Repositories;
-using Looplet.API.Configuration;
+using Looplet.Hub.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Looplet.API.Controllers;
+namespace Looplet.Hub.Controllers;
 public class ModuleController : ControllerBase
 {
     private readonly List<WorkerConfig> _workerConfigs;

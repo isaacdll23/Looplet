@@ -1,8 +1,8 @@
-using Looplet.API.Extensions;
-using Looplet.API.Infrastructure.Scheduling;
+using Looplet.Hub.Extensions;
+using Looplet.Hub.Infrastructure.Scheduling;
+using Looplet.Hub.Services;
+using Looplet.Hub.Repositories;
 using Serilog;
-using Looplet.API.Services;
-using Looplet.API.Repositories;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +30,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-builder.Configuration
-    .AddEnvironmentVariables();
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Host.UseSerilog();
 
@@ -44,7 +43,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddMongoServices(builder.Configuration);
 builder.Services.AddScoped<IWorkerService, WorkerService>();
 builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
-// builder.Services.AddHostedService<JobSchedulerService>();
+builder.Services.AddSingleton<SchedulerState>();
+builder.Services.AddHostedService<JobSchedulerService>();
 
 WebApplication app = builder.Build();
 

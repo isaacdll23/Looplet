@@ -1,6 +1,6 @@
 using Infisical.Sdk;
 
-namespace Looplet.API.Infrastructure.Infisical;
+namespace Looplet.Hub.Infrastructure.Infisical;
 
 public class InfisicalService
 {
@@ -38,5 +38,5 @@ public class InfisicalService
         };
 
         return _infisicalClient.ListSecrets(options);
-    }    
+    }
 }

@@ -4,58 +4,72 @@ using Looplet.Abstractions.Models;
 using Looplet.Abstractions.Models.DTOs;
 using Looplet.Abstractions.Models.Requests;
 using Looplet.Abstractions.Repositories;
+using Looplet.Hub.Models;
+using Looplet.Hub.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Bson;
 
-namespace Looplet.API.Infrastructure.Scheduling;
+namespace Looplet.Hub.Infrastructure.Scheduling;
 
-public class JobSchedulerService : BackgroundService
+public class JobSchedulerService(
+  IServiceScopeFactory serviceScopeFactory,
+  ILogger<JobSchedulerService> logger,
+  IHttpClientFactory httpFactory,
+  SchedulerState schedulerState) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<JobSchedulerService> _logger;
-    private readonly IHttpClientFactory _httpFactory;
+    private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
+    private readonly ILogger<JobSchedulerService> _logger = logger;
+    private readonly IHttpClientFactory _httpFactory = httpFactory;
     private readonly TimeSpan _pollInterval = TimeSpan.FromSeconds(1);
+    private readonly TimeSpan _disabledPollInterval = TimeSpan.FromSeconds(10);
+    private readonly TimeSpan _cacheExpiration = TimeSpan.FromMinutes(5);
     private readonly int _maxParallelJobs = 4;
-    private readonly List<Uri> _workerBaseUris;
-    private readonly Uri _callbackBaseUri;
-
-    public JobSchedulerService(
-      IServiceProvider serviceProvider,
-      ILogger<JobSchedulerService> logger,
-      IHttpClientFactory httpFactory,
-      IConfiguration config)
-    {
-        _serviceProvider = serviceProvider;
-        _logger = logger;
-        _httpFactory = httpFactory;
-
-
-        // Read configuration values
-        List<string>? workerNodeUris = config.GetSection("WorkerNodesBaseUriList").Get<List<string>>();
-
-        if (workerNodeUris == null)
-            throw new ArgumentNullException("WorkerBaseUri is not configured.");
-        if (config["CallbackBaseUri"] == null)
-            throw new ArgumentNullException("CallbackBaseUri is not configured.");
-
-        _workerBaseUris = workerNodeUris
-            .Select(uri => new Uri(uri))
-            .ToList();
-        _callbackBaseUri = new Uri(config["CallbackBaseUri"]!);
-    }
+    private readonly SchedulerState _schedulerState = schedulerState;
+    private readonly MemoryCache _cache = new(new MemoryCacheOptions());
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         var sem = new SemaphoreSlim(_maxParallelJobs);
         while (!cancellationToken.IsCancellationRequested)
         {
-            _logger.LogDebug("Polling for due jobs at {Now}", DateTime.UtcNow);
-            using IServiceScope scope = _serviceProvider.CreateScope();
+            if (!_schedulerState.Enabled)
+            {
+                _logger.LogInformation("Job scheduler is disabled. Standing By.");
+                await Task.Delay(_disabledPollInterval, cancellationToken);
+                continue;
+            }
+
+            using IServiceScope scope = _serviceScopeFactory.CreateScope();
+            IWorkerRepository workerRepository = scope.ServiceProvider.GetRequiredService<IWorkerRepository>();
+
+            if (!_cache.TryGetValue("workers", out List<Worker>? workers))
+            {
+                workers = await workerRepository.GetAllAsync();
+                if (workers.Count == 0)
+                {
+                    _logger.LogInformation("No workers found. Standing By.");
+                    await Task.Delay(_disabledPollInterval, cancellationToken);
+                    continue;
+                }
+                _cache.Set("workers", workers, _cacheExpiration);
+            }
+
+            _logger.LogInformation("Polling for due jobs at {Now}", DateTime.UtcNow);
             IJobDefinitionRepository jobDefinitionRepository = scope.ServiceProvider.GetRequiredService<IJobDefinitionRepository>();
             IJobInstanceRepository jobInstanceRepository = scope.ServiceProvider.GetRequiredService<IJobInstanceRepository>();
             List<JobDefinition> allJobs = await jobDefinitionRepository.ListAsync();
             var toRun = allJobs
                                 .Where(j => j.Enabled && j.NextRunAt <= DateTime.UtcNow)
                                 .ToList();
+
+            if (toRun.Count == 0)
+            {
+                _logger.LogInformation("No jobs to run.");
+            }
+            else
+            {
+                _logger.LogInformation("Found {Count} jobs to run.", toRun.Count);
+            }
 
             foreach (JobDefinition? jobDefinition in toRun)
             {
@@ -81,10 +95,15 @@ public class JobSchedulerService : BackgroundService
     {
         try
         {
-            // Validate job definition is available on worker
-            // make get request to worker
+            var worker = _cache.Get<List<Worker>>("workers")?.FirstOrDefault();
+            if (worker == null)
+            {
+                _logger.LogError("Worker not found.");
+                return;
+            }
+
             HttpClient client = _httpFactory.CreateClient();
-            HttpResponseMessage resp = await client.GetAsync($"{_workerBaseUris.First()}/plugins/jobs", cancellationToken);
+            HttpResponseMessage resp = await client.GetAsync($"{worker.BaseUrl}/plugins/jobs", cancellationToken);
             if (resp.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 _logger.LogError("Worker is not available. Status code: {StatusCode}", resp.StatusCode);
@@ -142,7 +161,7 @@ public class JobSchedulerService : BackgroundService
             // POST to worker
             client = _httpFactory.CreateClient();
             resp = await client.PostAsJsonAsync(
-                            $"{_workerBaseUris.First()}/execute", request, cancellationToken);
+                            $"{worker.BaseUrl}/execute", request, cancellationToken);
 
             if (resp.StatusCode != System.Net.HttpStatusCode.OK)
             {
@@ -159,7 +178,7 @@ public class JobSchedulerService : BackgroundService
 
             _logger.LogInformation("Job {Job} dispatched to worker.", jobDefinition.Name);
 
-            // Mark instance as “Dispatched”
+            // Mark instance as "Dispatched"
             jobInstance.Status = JobStatus.Running;
             await jobInstanceRepository.UpdateAsync(jobInstance);
         }

@@ -1,4 +1,4 @@
-namespace Looplet.API.Configuration;
+namespace Looplet.Hub.Configuration;
 public class WorkerConfig
 {
     public string Alias { get; set; } = default!;

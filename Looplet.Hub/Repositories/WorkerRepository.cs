@@ -1,15 +1,15 @@
-using Looplet.API.Models;
+using Looplet.Hub.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Looplet.API.Repositories;
+namespace Looplet.Hub.Repositories;
 
 public interface IWorkerRepository
 {
     Task<Worker?> GetByAliasAsync(string alias);
     Task<Worker?> GetByIdAsync(string id);
     Task<Worker> CreateAsync(Worker worker);
-    Task<IEnumerable<Worker>> GetAllAsync();
+    Task<List<Worker>> GetAllAsync();
     Task UpdateAsync(Worker worker);
     Task DeleteAsync(string id);
 }
@@ -39,7 +39,7 @@ public class WorkerRepository : IWorkerRepository
         return worker;
     }
 
-    public async Task<IEnumerable<Worker>> GetAllAsync()
+    public async Task<List<Worker>> GetAllAsync()
     {
         return await _workers.Find(FilterDefinition<Worker>.Empty).ToListAsync();
     }
