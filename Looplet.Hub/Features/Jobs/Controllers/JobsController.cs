@@ -1,4 +1,5 @@
-﻿using Looplet.Hub.Features.Jobs.Models;
+﻿using Looplet.Abstractions.DTOs;
+using Looplet.Hub.Features.Jobs.Models;
 using Looplet.Hub.Features.Jobs.Repositories;
 using Looplet.Hub.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
@@ -19,8 +20,9 @@ public class JobsController(IJobDefinitionRepository jobRepository) : Controller
 
     [HttpPost]
     [Route("api/jobs")]
-    public async Task<IActionResult> Create([FromBody] CreateJobRequest jobRequest)
+    public async Task<IActionResult> Create([FromBody] CreateJobDto jobRequest)
     {
+        // TODO: Review this to comply with new understanding of a lifecycle of a plugin/job.
         if (jobRequest == null)
         {
             return BadRequest("Job definition cannot be null.");
@@ -55,16 +57,6 @@ public class JobsController(IJobDefinitionRepository jobRepository) : Controller
 
         JobDefinition createdJob = await jobRepository.CreateAsync(jobDefinition);
 
-
-        return CreatedAtAction(nameof(Create), new { id = createdJob.Id.ToString() });
-    }
-
-    [HttpGet]
-    [Route("api/jobs/types")]
-    public IActionResult GetJobTypes()
-    {
-        // return the list of available job from workers
-
-        return Ok();
+        return Created(nameof(Create), createdJob.Id.ToString());
     }
 }

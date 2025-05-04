@@ -1,4 +1,5 @@
 using Looplet.Hub.Extensions;
+using Looplet.Hub.Features.Jobs.Repositories;
 using Looplet.Hub.Features.Scheduler;
 using Looplet.Hub.Features.Scheduler.Services;
 using Looplet.Hub.Features.Workers.Repositories;
@@ -44,6 +45,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddMongoServices(builder.Configuration);
 builder.Services.AddScoped<IWorkerService, WorkerService>();
 builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
+builder.Services.AddScoped<IJobInstanceRepository, JobInstanceRepository>();
+builder.Services.AddScoped<IJobDefinitionRepository, JobDefinitionRepository>();
 builder.Services.AddSingleton<SchedulerState>();
 builder.Services.AddHostedService<SchedulerService>();
 

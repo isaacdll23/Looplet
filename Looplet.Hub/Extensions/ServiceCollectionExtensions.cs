@@ -1,5 +1,4 @@
-﻿using Looplet.Hub.Features.Jobs.Repositories;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace Looplet.Hub.Extensions;
 
@@ -26,9 +25,6 @@ public static class ServiceCollectionExtensions
             IMongoClient client = _.GetRequiredService<IMongoClient>();
             return client.GetDatabase(databaseName);
         });
-
-        services.AddScoped<IJobInstanceRepository, JobInstanceRepository>();
-        services.AddScoped<IJobDefinitionRepository, JobDefinitionRepository>();
 
         return services;
     }

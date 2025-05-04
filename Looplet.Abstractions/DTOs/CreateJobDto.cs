@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 
-namespace Looplet.Hub.Features.Jobs.Models;
+namespace Looplet.Abstractions.DTOs;
 
-public class CreateJobRequest
+public class CreateJobDto
 {
     public string Name { get; set; } = default!;
     public string JobType { get; set; } = default!;
