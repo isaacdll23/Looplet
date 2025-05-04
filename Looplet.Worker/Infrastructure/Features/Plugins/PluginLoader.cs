@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 using Looplet.Abstractions.Interfaces;
-using Looplet.Worker.Infrastructure.Features.Plugins;
 using Serilog;
 
 namespace Looplet.Worker.Infrastructure.Features.Plugins;
@@ -9,7 +8,8 @@ namespace Looplet.Worker.Infrastructure.Features.Plugins;
 public static class PluginLoader
 {
     private static readonly ConcurrentDictionary<string, PluginLoadContext> _loadContexts = new();
-    private static void LoadPlugin(string pluginPath, IServiceCollection services)
+    private static readonly string _pluginsDirectory = Path.Combine(AppContext.BaseDirectory, "Plugins");
+    private static void LoadPlugin(string pluginPath, IServiceCollection? services)
     {
         var pluginName = Path.GetFileNameWithoutExtension(pluginPath);
         if (_loadContexts.ContainsKey(pluginName))
@@ -28,12 +28,17 @@ public static class PluginLoader
 
             // register modules
             IEnumerable<Type> mods = asm.GetTypes()
-                .Where(t => typeof(IJobModule).IsAssignableFrom(t)
+                .Where(t => typeof(IPlugin).IsAssignableFrom(t)
                          && !t.IsAbstract && !t.IsInterface);
 
             foreach (Type m in mods)
             {
-                var module = (IJobModule) Activator.CreateInstance(m)!;
+                var module = (IPlugin) Activator.CreateInstance(m)!;
+                if (services == null)
+                {
+                    Log.Logger.Information("No services provided for plugin {Type}", m.FullName);
+                    continue;
+                }
                 module.ConfigureServices(services);
                 Log.Logger.Information("Configured module {Type}", m.FullName);
             }
@@ -79,10 +84,48 @@ public static class PluginLoader
     {
         var pluginsPath = Path.Combine(AppContext.BaseDirectory, "Plugins");
 
-        List<string> available = Directory.Exists(pluginsPath)
-            ? [.. Directory.EnumerateFiles(pluginsPath, "*.dll").Select(Path.GetFileNameWithoutExtension)]
-            : [];
+        if (!Directory.Exists(pluginsPath))
+        {
+            Log.Logger.Information("Plugins directory {PluginsPath} does not exist", pluginsPath);
+            return [];
+        }
+
+        // Get all DLL files in the plugins directory and its subdirectories
+        var pluginFiles = Directory.GetFiles(pluginsPath, "*.dll", SearchOption.AllDirectories);
+
+        var available = new List<string>();
+
+        foreach (var pluginFile in pluginFiles)
+        {
+            var pluginName = Path.GetFileNameWithoutExtension(pluginFile);
+            available.Add(pluginName);
+        }
 
         return available;
+    }
+
+    public static List<string> GetAvailableJobs(string pluginName)
+    {
+        if (!_loadContexts.TryGetValue(pluginName, out var loadContext))
+        {
+            Log.Logger.Information("Plugin {Plugin} not loaded. Loading to list jobs.", pluginName);
+
+            var pluginPath = Path.Combine(_pluginsDirectory, pluginName, $"{pluginName}.dll");
+            LoadPlugin(pluginPath, new ServiceCollection());
+            if (!_loadContexts.TryGetValue(pluginName, out loadContext))
+            {
+                Log.Logger.Error("Failed to load plugin {Plugin} to list jobs.", pluginName);
+                return [];
+            }
+        }
+
+        Assembly asm = loadContext.LoadFromAssemblyName(new AssemblyName(pluginName));
+        var jobs = asm.GetTypes()
+            .Where(t => typeof(IJob).IsAssignableFrom(t)
+                     && !t.IsAbstract && !t.IsInterface)
+            .Select(t => t.Name)
+            .ToList();
+
+        return jobs;
     }
 }

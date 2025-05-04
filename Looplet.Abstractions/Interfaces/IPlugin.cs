@@ -2,7 +2,7 @@
 
 namespace Looplet.Abstractions.Interfaces;
 
-public interface IJobModule
+public interface IPlugin
 {
     void ConfigureServices(IServiceCollection services);
 }
