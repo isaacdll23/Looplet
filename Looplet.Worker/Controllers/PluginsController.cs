@@ -1,5 +1,5 @@
 using Looplet.Abstractions.DTOs;
-using Looplet.Worker.Infrastructure;
+using Looplet.Worker.Infrastructure.Features.Plugins;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Looplet.Worker.Controllers;
@@ -10,30 +10,30 @@ public class PluginsController(ILogger<PluginsController> _logger) : ControllerB
     private readonly string _hostname = Environment.MachineName;
     private const string _pluginsDirectory = "Plugins";
 
-    [HttpGet]
-    [Route("api/plugins/jobs")]
-    public ActionResult<List<PluginJobDto>> ListJobs()
-    {
-        IReadOnlyList<string> jobs = PluginLoader.LoadedJobs;
+    // [HttpGet]
+    // [Route("api/plugins/jobs")]
+    // public ActionResult<List<PluginJobDto>> ListJobs()
+    // {
+    //     IReadOnlyList<string> jobs = PluginLoader.;
 
-        var response = jobs.Select(job => new PluginJobDto
-        {
-            Name = job,
-            Hostname = _hostname
-        }).ToList();
+    //     var response = jobs.Select(job => new PluginJobDto
+    //     {
+    //         Name = job,
+    //         Hostname = _hostname
+    //     }).ToList();
 
-        return Ok(response);
-    }
+    //     return Ok(response);
+    // }
 
     [HttpGet]
     [Route("api/plugins/modules")]
-    public ActionResult<List<PluginModuleDto>> ListModules()
+    public ActionResult<List<PluginModuleDto>> ListPlugins()
     {
-        IReadOnlyList<string> modules = PluginLoader.LoadedModules;
+        var plugins = PluginLoader.GetAvailablePlugins();
 
-        var response = modules.Select(module => new PluginModuleDto
+        var response = plugins.Select(plugin => new PluginModuleDto
         {
-            Name = module,
+            Name = plugin,
             Hostname = _hostname
         }).ToList();
 

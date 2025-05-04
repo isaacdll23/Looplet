@@ -25,8 +25,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IJobFactory, JobFactory>();
 builder.Services.AddSingleton<IConfiguration>(configuration);
 
-PluginLoader.LoadPlugins(builder.Services, "Plugins");
-
 WebApplication app = builder.Build();
 
 app.MapControllers();
