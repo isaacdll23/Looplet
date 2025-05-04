@@ -1,5 +1,4 @@
 using Looplet.Abstractions.DTOs;
-using Looplet.Hub.Features.Jobs.Repositories;
 using Looplet.Hub.Features.Workers.Models;
 using Looplet.Hub.Features.Workers.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace Looplet.Hub.Features.Plugins.Controllers;
 public class PluginsController : ControllerBase
 {
+    private readonly ILogger<PluginsController> _logger;
     private readonly IWorkerRepository _workerRepository;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public PluginsController(IWorkerRepository workerRepository)
+    public PluginsController(ILogger<PluginsController> logger, IWorkerRepository workerRepository, IHttpClientFactory httpClientFactory)
     {
+        _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _workerRepository = workerRepository;
     }
 
@@ -56,13 +59,19 @@ public class PluginsController : ControllerBase
     {
         if (singleFileUpload)
         {
+            _logger.LogInformation($"Uploading plugin {pluginName} as a single file.");
             // Handle single file upload
             foreach (var worker in await _workerRepository.GetAllAsync())
             {
-                using var httpClient = new HttpClient { BaseAddress = new Uri(worker.BaseUrl) };
-                using var formContent = new MultipartFormDataContent();
-                formContent.Add(new StringContent(pluginName), "pluginName");
-                formContent.Add(new StreamContent(pluginFile.OpenReadStream()), "pluginFile", pluginFile.FileName);
+                HttpClient httpClient = _httpClientFactory.CreateClient();
+                httpClient.BaseAddress = new Uri(worker.BaseUrl);
+                using var formContent = new MultipartFormDataContent
+                {
+                    { new StringContent(pluginName), "pluginName" },
+                    { new StreamContent(pluginFile.OpenReadStream()), "pluginFile", pluginFile.FileName }
+                };
+
+                _logger.LogInformation($"Uploading plugin {pluginName} to {worker.Alias} [{worker.BaseUrl}]");
 
                 HttpResponseMessage response = await httpClient.PostAsync("plugins/upload", formContent);
                 if (!response.IsSuccessStatusCode)
