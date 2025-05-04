@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 
-namespace Looplet.Hub.Extensions;
+namespace Looplet.Hub.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {

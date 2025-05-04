@@ -1,6 +1,6 @@
 using Looplet.Hub.Infrastructure.Infisical;
 
-namespace Looplet.Hub.Extensions;
+namespace Looplet.Hub.Infrastructure.Extensions;
 
 public static class InfisicalConfigurationExtensions
 {
