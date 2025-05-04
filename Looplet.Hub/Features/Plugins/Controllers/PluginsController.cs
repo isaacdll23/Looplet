@@ -47,4 +47,15 @@ public class PluginsController : ControllerBase
 
         return Ok(allPlugins);
     }
+
+    [HttpPost]
+    [Route("api/plugins/upload")]
+    [Consumes("multipart/form-data")]
+    [Produces("application/json")]
+    public async Task<IActionResult> UploadPlugin([FromForm] string pluginName, [FromForm] IFormFile pluginFile)
+    {
+        // TODO: Create endpoint to upload plugins (either individual DLLs or some sort of package) and deploy to workers.
+        // Endpoint needs to "register" the plugins and jobs in the database.
+        throw new NotImplementedException();
+    }
 }
