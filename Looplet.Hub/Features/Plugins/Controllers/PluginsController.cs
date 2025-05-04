@@ -52,10 +52,31 @@ public class PluginsController : ControllerBase
     [Route("api/plugins/upload")]
     [Consumes("multipart/form-data")]
     [Produces("application/json")]
-    public async Task<IActionResult> UploadPlugin([FromForm] string pluginName, [FromForm] IFormFile pluginFile)
+    public async Task<IActionResult> UploadPlugin([FromForm] string pluginName, [FromForm] bool singleFileUpload, [FromForm] IFormFile pluginFile)
     {
-        // TODO: Create endpoint to upload plugins (either individual DLLs or some sort of package) and deploy to workers.
-        // Endpoint needs to "register" the plugins and jobs in the database.
+        if (singleFileUpload)
+        {
+            // Handle single file upload
+            foreach (var worker in await _workerRepository.GetAllAsync())
+            {
+                using var httpClient = new HttpClient { BaseAddress = new Uri(worker.BaseUrl) };
+                using var formContent = new MultipartFormDataContent();
+                formContent.Add(new StringContent(pluginName), "pluginName");
+                formContent.Add(new StreamContent(pluginFile.OpenReadStream()), "pluginFile", pluginFile.FileName);
+
+                HttpResponseMessage response = await httpClient.PostAsync("plugins/upload", formContent);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return StatusCode((int) response.StatusCode, $"Failed to upload plugin to {worker.Alias}. Error: {response.ReasonPhrase}");
+                }
+            }
+
+            // TODO: Register the plugin in the database
+
+            return Ok("Plugin uploaded successfully.");
+        }
+
+        // TODO: Handle multiple file upload (bundles of plugins and dependencies)
         throw new NotImplementedException();
     }
 }
