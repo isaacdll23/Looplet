@@ -3,7 +3,7 @@ using Looplet.Hub.Features.Workers.Models;
 using Looplet.Hub.Features.Workers.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Looplet.Hub.Features.Modules.Controllers;
+namespace Looplet.Hub.Features.Workers.Controllers;
 
 [ApiController]
 public class WorkersController : ControllerBase
