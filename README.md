@@ -8,12 +8,14 @@ Lightweight C# job‐scheduling framework composed of a central Hub, pluggable W
   Interfaces & DTOs (`IJob`, `ExecuteRequestDto`, etc.).
 - **Looplet.Hub**
   ASP.NET Core Web API + background `SchedulerService`:
+  
   • Manage job definitions & instances (MongoDB)
   • Dispatch due jobs to Workers
   • Endpoints:
     - `GET  /api/jobs`
     - `POST /api/jobs`
     - `GET  /api/jobs/types`
+
 - **Looplet.Worker**
   ASP.NET Core Web API hosting `IJob` implementations:
   • `/plugins/jobs` to list supported job types
@@ -28,4 +30,3 @@ Lightweight C# job‐scheduling framework composed of a central Hub, pluggable W
 - Environment variables (Hub):
   - `INFISICAL_LOOPLET_PROJECT_ID`
   - `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID`
-  …etc.
