@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Looplet.Abstractions.DTOs;
 
-public class PluginModuleDto
+public class PluginDto
 {
     public string Name { get; set; } = default!;
     public string Hostname { get; set; } = default!;
+
 }

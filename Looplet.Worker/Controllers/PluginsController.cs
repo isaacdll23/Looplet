@@ -12,11 +12,19 @@ public class PluginsController(ILogger<PluginsController> _logger) : ControllerB
 
     [HttpGet]
     [Route("api/plugins")]
-    public ActionResult<List<PluginModuleDto>> ListPlugins()
+    public ActionResult<List<PluginDto>> ListPlugins()
     {
+        _logger.LogInformation("Listing available plugins.");
         var plugins = PluginLoader.GetAvailablePlugins();
 
-        var response = plugins.Select(plugin => new PluginModuleDto
+        if (plugins.Count == 0)
+        {
+            _logger.LogInformation("No plugins found.");
+        }
+
+        _logger.LogInformation("Found {PluginCount} plugins.", plugins.Count);
+
+        var response = plugins.Select(plugin => new PluginDto
         {
             Name = plugin,
             Hostname = _hostname

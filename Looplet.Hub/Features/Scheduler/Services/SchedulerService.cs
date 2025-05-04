@@ -60,6 +60,7 @@ public class SchedulerService(
             if (toRun.Count == 0)
             {
                 _logger.LogInformation("No jobs to run.");
+                await Task.Delay(_pollInterval, cancellationToken);
                 continue;
             }
 
