@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 # configure environment and expose port
-ENV ASPNETCORE_URLS=http://:80
+ENV ASPNETCORE_URLS=http://localhost:80
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 EXPOSE 80
