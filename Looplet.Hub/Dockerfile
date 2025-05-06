@@ -8,7 +8,7 @@ RUN pwd && ls -la
 
 COPY ../Looplet.sln .
 COPY Looplet.Abstractions/Looplet.Abstractions.csproj Looplet.Abstractions/
-COPY Looplet.Hub.csproj Looplet.Hub/
+COPY Looplet.Hub/Looplet.Hub.csproj Looplet.Hub/
 
 # restore dependencies
 RUN dotnet restore Looplet.Hub.csproj
