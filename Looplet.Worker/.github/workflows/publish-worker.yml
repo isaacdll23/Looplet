@@ -2,7 +2,7 @@ name: Build & Publish Looplet.Worker (Linux)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   publish:
