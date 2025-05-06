@@ -3,8 +3,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # copy solution and project files
+
+RUN pwd && ls -la
+
 COPY ../Looplet.sln .
-COPY ../Looplet.Abstractions/Looplet.Abstractions.csproj Looplet.Abstractions/
+COPY Looplet.Abstractions/Looplet.Abstractions.csproj Looplet.Abstractions/
 COPY Looplet.Hub.csproj Looplet.Hub/
 
 # restore dependencies
