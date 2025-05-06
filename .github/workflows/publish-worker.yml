@@ -25,7 +25,7 @@ jobs:
             -o dist/Looplet.Worker/linux-x64
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: LoopletWorker-linux
           path: dist/Looplet.Worker/linux-x64
