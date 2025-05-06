@@ -1,0 +1,31 @@
+name: Build & Publish Looplet.Worker (Linux)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish self-contained Linux executable
+        run: |
+          dotnet publish Looplet.Worker/Looplet.Worker.csproj \
+            -c Release \
+            -r linux-x64 \
+            --self-contained true \
+            -o dist/Looplet.Worker/linux-x64
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: LoopletWorker-linux
+          path: dist/Looplet.Worker/linux-x64
